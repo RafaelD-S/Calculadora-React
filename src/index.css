@@ -1,3 +1,12 @@
 input::placeholder {
     opacity: .4;
 }
+
+@keyframes color {
+	0%   { box-shadow: 0 0 12px #33CCCC;}
+	20%  { box-shadow: 0 0 12px #33CC36;}
+	40%  { box-shadow: 0 0 12px #B8CC33;}
+	60%  { box-shadow: 0 0 12px #FCCA00;}
+	80%  { box-shadow: 0 0 12px #33CC36;}
+	100% { box-shadow: 0 0 12px #33CCCC;}
+}

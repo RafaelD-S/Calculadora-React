@@ -1,6 +1,13 @@
 import { useState } from "react"
 import styled, {createGlobalStyle} from "styled-components"
 
+// O código acabou por ficar meio lotado por conta de todos os
+// comentários, eu fiz ele para descrever meus pensamentos
+// enquanto fazia o código mas eu gostaria de saber se é
+// recomendado, por exemplo, em trabalhos reais comentar
+// desta forma.
+
+
 // Reset e modificações na body
 const GlobalStyle = createGlobalStyle `
 * {
@@ -21,7 +28,7 @@ body {
 
 const ContainerCalculadora = styled.section `
 
-    position: absolute; 
+    position: absolute;
     bottom: 0;
     top: 0;
     left: 0;
@@ -29,9 +36,9 @@ const ContainerCalculadora = styled.section `
     margin: auto;
     display: flex;
     flex-direction: column;
-    max-width: 25rem;
+    max-width: 24rem;
     max-height: fit-content;
-    width: 95%;
+    width: 100%;
     background-color: rgba(0, 0, 0, 0.365);
     padding: 2rem;
     box-shadow: 0 5px 10px black;
@@ -100,13 +107,12 @@ const AreaDosBotoes = styled.div `
     }
 
 `
-const BotaoSecreto = styled.button `
+const BotaoSecreto = styled.div `
 
     position: absolute;
     padding: .25rem;
     cursor: pointer;
     background-color: black;
-    border: none;
     border-radius: 50%;
     bottom: 10px;
     right: 10px;
@@ -194,6 +200,7 @@ export default function Calculadora() {
         }
     ])
 
+    
     // Hooks para, respectivamente: Resposta do cálculo, A operação(+, -, etc.), o primeiro e o segundo valor.
     const[calculo, setCalculo] = useState('')
     const[operador, setOperador] = useState('')
@@ -251,12 +258,21 @@ export default function Calculadora() {
             }
             // Caso o operador seja de divisão
             else if(operador == "/") {
-                setCalculo(+primeiroValor / +segundoValor)
+                if(segundoValor == 0) {
+                    setCalculo("... Por quê!?")
+                } else {
+                    setCalculo(+primeiroValor / +segundoValor)
+                }
             }
 
             // (SEGREDO)
             else {
-                setCalculo((+primeiroValor) ** (+segundoValor))
+                if((+primeiroValor) ** (+segundoValor) == Infinity) {
+                    setCalculo("Pra que isso???")
+                } else {
+                    setCalculo((+primeiroValor) ** (+segundoValor))
+                }
+
             }
         }
     }
@@ -270,8 +286,10 @@ export default function Calculadora() {
     }
     
     // TUDO A PARTIR DESTE PONTO É SECRETO, EXPLORE A PÁGINA ANTES DE LER PARA UMA MELHOR EXPERIÊNCIA
-
-
+    
+    
+    // Pequena animação extra caso descubra o segredo
+    const[animacao, setAnimacao] = useState('')
     // Hook para o aparecimento e desaparecimento do botão secreto de potência
     const [displayDoBotao, setDisplayDoBotao] = useState("none")
     // Hook para verificar se o botão está aparecendo ou não
@@ -285,12 +303,14 @@ export default function Calculadora() {
             alert("Parabens, você achou um easter-egg. || Agora você pode fazer cálculos de potência.")
             setDisplayDoBotao("inline-block")
             setModalSecreto(false)
+            setAnimacao("color 2s infinite linear")
         } 
         // Caso o botão esteja aparecendo (modalSecreto == false)
         else {
             // Faça desaparecer e avise ao código que está desaparecido (modalSecreto == true)
             setDisplayDoBotao("none")
             setModalSecreto(true)
+            setAnimacao('')
         }
     }
     // Função para a realização do cálculo de potenciação
@@ -304,7 +324,7 @@ export default function Calculadora() {
     return (
         <>
             <GlobalStyle/>
-            <ContainerCalculadora>
+            <ContainerCalculadora style={{animation: animacao}}>
                 <AreaDosInputs>
                     <input type="text" value={primeiroValor} onClick={focar} placeholder="0"/>
                     <input type="text" disabled value={operador}/>
