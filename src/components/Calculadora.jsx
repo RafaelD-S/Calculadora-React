@@ -1,5 +1,8 @@
 import { useState } from "react"
 import styled, {createGlobalStyle} from "styled-components"
+import History from '../assets/history.png'
+import Copy from '../assets/copy.png'
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 // O código acabou por ficar meio lotado por conta de todos os
 // comentários, eu fiz ele para descrever meus pensamentos
@@ -117,6 +120,43 @@ const BotaoSecreto = styled.div `
     bottom: 10px;
     right: 10px;
 `
+const BotaoHistorico = styled.div `
+
+position: absolute;
+top: 9px;
+right: 9px;
+cursor: pointer;
+z-index: +2;
+opacity: .55;
+transition: opacity .2s ease;
+
+img {
+    width: 18px;
+}
+&:hover {
+    opacity: .8;
+}
+`
+const ContainerHistorico = styled.div `
+
+position: absolute;
+z-index: +1;
+background-color: #201725;
+top: 0;
+right: 0;
+left: 0;
+bottom: 0%;
+overflow: hidden;
+color: white;
+display: flex;
+align-items: center;
+justify-content: center;
+
+ul {
+    width: 90%;
+    height: 84%;
+}
+`
 
 const Segredo = styled.button `
 
@@ -128,6 +168,28 @@ const Segredo = styled.button `
     cursor: pointer;
 
 
+`
+const CopyButton = styled.div `
+
+    position: absolute;
+    top: 5rem;
+    right: 2rem;
+    height: 3.7rem;
+    display: flex;
+    align-items: center;
+    padding: 0rem .75rem;
+    justify-content: center;
+    border-radius: 50px 0 0 50px;
+    cursor: pointer;
+    transition: filter .2s ease, background-color .2s ease;
+
+    &:hover {
+        filter:invert(0.7);
+        background-color: rgba(0, 0, 0, .02)
+    }
+    img {
+        width: 17px;
+    }
 `
 
 export default function Calculadora() {
@@ -199,8 +261,10 @@ export default function Calculadora() {
             tipo: "resultado"
         }
     ])
-
     
+    // Hook para a criação de uma página de histórico de cálculos
+    const [historico, setHistorico] = useState([])
+
     // Hooks para, respectivamente: Resposta do cálculo, A operação(+, -, etc.), o primeiro e o segundo valor.
     const[calculo, setCalculo] = useState('')
     const[operador, setOperador] = useState('')
@@ -215,26 +279,22 @@ export default function Calculadora() {
     const aplicar = (e) => { 
 
     // Caso estejamos mudando o primeiro espaço de cálculo (mudar == true) como também o botão que estamos pressionando é um número
-
     if(mudar == true && e.target.className == "numero") {
-        // modifique o primeiro espaço
         setPrimeiroValor(primeiroValor + e.target.innerText)
         } 
 
     // Caso estejamos mudando o segundo espaço do cálculo (mudar == false) como também o botão que estamos pressionando é um número
         else if(mudar == false && e.target.className == "numero") {
-        // modifique o segundo espaço
             setSegundoValor(segundoValor + e.target.innerText)
         }
     // Caso o botão pressionado seja um operador(+, -, etc.)
         else if(e.target.className == "operador") {
-            // Coloque o operador no cálculo e selecione o segundo espaço de cálculo
             setOperador(e.target.innerText)
             setMudar(false)
         } 
+
     // Caso o botão pressionado seja o de apagar(AC)
         else if(e.target.className == "apagar") {
-            // Resete todos os valores e selecione o primeiro espaço de cálculo (mudar == true)
             setOperador('')
             setPrimeiroValor('')
             setSegundoValor('')
@@ -242,26 +302,27 @@ export default function Calculadora() {
             setMudar(true)
 
         } 
+
     // Caso pressionarmos o botão de realizar o cálculo
         else if(e.target.className == "resultado") {
-            // Caso o operador seja de soma
-            if(operador == "+") {
+            if(operador == "+") { // soma
                 setCalculo(+primeiroValor + +segundoValor)
+                setHistorico(historico.concat(primeiroValor + " " + operador + " " + segundoValor + " = " + (+primeiroValor + +segundoValor)))
             }
-            // Caso o operador seja de subtração
-            else if(operador == "-") {
+            else if(operador == "-") { // subtração
                 setCalculo(+primeiroValor - +segundoValor)
+                setHistorico(historico.concat(primeiroValor + " " + operador + " " + segundoValor + " = " + (+primeiroValor - +segundoValor)))
             }
-            // Caso o operador seja de multiplicação
-            else if(operador == "*") {
+            else if(operador == "*") { // multiplicação
                 setCalculo(+primeiroValor * +segundoValor)
+                setHistorico(historico.concat(primeiroValor + " " + operador + " " + segundoValor + " = " + (+primeiroValor * +segundoValor)))
             }
-            // Caso o operador seja de divisão
-            else if(operador == "/") {
+            else if(operador == "/") { // divisão
                 if(segundoValor == 0) {
                     setCalculo("... Por quê!?")
                 } else {
                     setCalculo(+primeiroValor / +segundoValor)
+                    setHistorico(historico.concat(primeiroValor + " " + operador + " " + segundoValor + " = " + (+primeiroValor / +segundoValor)))
                 }
             }
 
@@ -271,8 +332,9 @@ export default function Calculadora() {
                     setCalculo("Pra que isso???")
                 } else {
                     setCalculo((+primeiroValor) ** (+segundoValor))
+                    setHistorico(historico.concat(primeiroValor + " " + operador + " " + segundoValor + " = " + ((+primeiroValor) ** (+segundoValor))))
                 }
-
+                
             }
         }
     }
@@ -287,19 +349,13 @@ export default function Calculadora() {
     
     // TUDO A PARTIR DESTE PONTO É SECRETO, EXPLORE A PÁGINA ANTES DE LER PARA UMA MELHOR EXPERIÊNCIA
     
-    
-    // Pequena animação extra caso descubra o segredo
-    const[animacao, setAnimacao] = useState('')
-    // Hook para o aparecimento e desaparecimento do botão secreto de potência
+    const [animacao, setAnimacao] = useState('')
     const [displayDoBotao, setDisplayDoBotao] = useState("none")
-    // Hook para verificar se o botão está aparecendo ou não
     const [modalSecreto, setModalSecreto] = useState(true)
-
+    
     // Funçãp para ativar e desativar o botão secreto de potência
     const funcaoSecreta = () => {
-        // Caso o botão esteja escondido (modalSecreto = true)
         if(modalSecreto) {
-            // Alerte, faça o botão aparecer e indique ao código que agora ele está aparecendo (modalSecreto == false)
             alert("Parabens, você achou um easter-egg. || Agora você pode fazer cálculos de potência.")
             setDisplayDoBotao("inline-block")
             setModalSecreto(false)
@@ -307,7 +363,6 @@ export default function Calculadora() {
         } 
         // Caso o botão esteja aparecendo (modalSecreto == false)
         else {
-            // Faça desaparecer e avise ao código que está desaparecido (modalSecreto == true)
             setDisplayDoBotao("none")
             setModalSecreto(true)
             setAnimacao('')
@@ -315,22 +370,56 @@ export default function Calculadora() {
     }
     // Função para a realização do cálculo de potenciação
     const potencia = (e) => {
-        // Mude o operador do cálculo para o de potenciação
         setOperador(e.target.innerText)
-        // Mude a seleção para o segundo espaço de cálculo
         setMudar(false)
     }
+
+    const [botaoHistorico, setBotaoHistorico] = useState('100%')
+    const [historicoModal, setHistoricoModal] = useState(true)
+
+    const botaoHistoricoClique = () => {
+        if(historicoModal == true) {
+            setBotaoHistorico('0%')
+            setHistoricoModal(false)
+        } 
+        else {
+            setBotaoHistorico('100%')
+            setHistoricoModal(true)
+        }
+    }
+
+    const copiar = () => {
+        
+    }
+
 
     return (
         <>
             <GlobalStyle/>
             <ContainerCalculadora style={{animation: animacao}}>
+                <BotaoHistorico onClick={botaoHistoricoClique}>
+                    <img src={History} alt="" />
+                </BotaoHistorico>
+                <ContainerHistorico className="teste" style={{bottom: botaoHistorico}}>
+                    <ul>
+                        {historico.map( (item) => (
+                            <li>
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                </ContainerHistorico>
                 <AreaDosInputs>
                     <input type="text" value={primeiroValor} onClick={focar} placeholder="0"/>
                     <input type="text" disabled value={operador}/>
                     <input type="text" value={segundoValor} onClick={focar} placeholder="0"/>
                 </AreaDosInputs>
             <Resposta type="text" value={calculo} placeholder="000" disabled/>
+                <CopyToClipboard text={calculo}>
+                    <CopyButton className="teste2">
+                        <img src={Copy} alt="" />
+                    </CopyButton>
+                </CopyToClipboard>
                 <AreaDosBotoes>
                 {/* 
                  Map para chamar todos os botões com númeoros, operações, entre outros.
