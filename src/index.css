@@ -3,29 +3,10 @@ input::placeholder {
 }
 
 @keyframes color {
-	0%   { box-shadow: 0 0 12px #33CCCC;}
-	20%  { box-shadow: 0 0 12px #33CC36;}
-	40%  { box-shadow: 0 0 12px #B8CC33;}
-	60%  { box-shadow: 0 0 12px #FCCA00;}
-	80%  { box-shadow: 0 0 12px #33CC36;}
-	100% { box-shadow: 0 0 12px #33CCCC;}
-}
-
-.teste ul {
-	list-style: none;
-	border: 2px solid gray;
-	display: flex;
-	padding: .5rem;
-	overflow: hidden;
-	justify-content: flex-end;
-	flex-direction: column-reverse;
-    background: radial-gradient(circle, rgba(0, 0, 0, 0.653) 10%, rgb(25, 25, 25) 98%);
-}
-.teste ul li {
-    color: lime;
-	border-radius: 40px;
-	padding: .45rem .7rem;
-	margin: .2rem 0;
-	letter-spacing: 2px;
-	background-color: rgba(73, 108, 77, 0.112);
+	0%   { box-shadow: 0 0 15px #33CCCC;}
+	20%  { box-shadow: 0 0 15px #33CC36;}
+	40%  { box-shadow: 0 0 15px #B8CC33;}
+	60%  { box-shadow: 0 0 15px #FCCA00;}
+	80%  { box-shadow: 0 0 15px #33CC36;}
+	100% { box-shadow: 0 0 15px #33CCCC;}
 }

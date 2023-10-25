@@ -1,8 +1,15 @@
-# React + Vite
+# Calculadora Simples RD-S
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Calculadora proposta como desafio no curso de programação Front-end Vai na Web com objetivo de testar os conhecimentos em React.
 
-Currently, two official plugins are available:
+### A calculadora apresenta as seguintes operações (entre 2 números):
+- Soma
+- Subtração
+- Multiplicação
+- Divsão
+- Potenciação
+- Porcentagem
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Além dos dígitos comuns, temos modificações simples como:
+- Números negativos
+- Décimais

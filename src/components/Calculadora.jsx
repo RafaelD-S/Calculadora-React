@@ -4,12 +4,6 @@ import History from '../assets/history.png'
 import Copy from '../assets/copy.png'
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
-// O código acabou por ficar meio lotado por conta de todos os
-// comentários, eu fiz ele para descrever meus pensamentos
-// enquanto fazia o código mas eu gostaria de saber se é
-// recomendado, por exemplo, em trabalhos reais comentar
-// desta forma.
-
 
 // Reset e modificações na body
 const GlobalStyle = createGlobalStyle `
@@ -57,6 +51,7 @@ const ContainerCalculadora = styled.section `
 const AreaDosInputs = styled.div `
 
     display: flex;
+    z-index: +1;
     justify-content: center;
     background-color: #4786FF;
     border-top: 5px solid #4786FF;
@@ -79,7 +74,7 @@ const AreaDosInputs = styled.div `
     }
 
 `
-const Resposta = styled.input `
+const AreaResposta = styled.input `
 
     text-align: center;
     font-family: "Chakra Petch";
@@ -89,6 +84,7 @@ const Resposta = styled.input `
     letter-spacing: 2px;
     font-size: 1.5rem;
     padding: .75rem 0;
+    border: none;
 
 `
 const AreaDosBotoes = styled.div `
@@ -122,54 +118,60 @@ const BotaoSecreto = styled.div `
 `
 const BotaoHistorico = styled.div `
 
-position: absolute;
-top: 9px;
-right: 9px;
-cursor: pointer;
-z-index: +2;
-opacity: .55;
-transition: opacity .2s ease;
+    position: absolute;
+    top: 9px;
+    right: 9px;
+    cursor: pointer;
+    z-index: +3;
+    opacity: .55;
+    transition: opacity .2s ease;
 
-img {
-    width: 18px;
-}
-&:hover {
-    opacity: .8;
-}
+    img {
+        width: 16px;
+    }
+    &:hover {
+        opacity: .8;
+    }
 `
 const ContainerHistorico = styled.div `
 
-position: absolute;
-z-index: +1;
-background-color: #201725;
-top: 0;
-right: 0;
-left: 0;
-bottom: 0%;
-overflow: hidden;
-color: white;
-display: flex;
-align-items: center;
-justify-content: center;
+    position: absolute;
+    z-index: +2;
+    background-color: #201725;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0%;
+    overflow: hidden;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-ul {
-    width: 90%;
-    height: 84%;
-}
+    ul {
+        width: 90%;
+        height: 84%;
+        list-style: none;
+        border: 2px solid gray;
+        display: flex;
+        padding: .5rem;
+        overflow: hidden;
+        justify-content: flex-end;
+        flex-direction: column-reverse;
+        background: radial-gradient(circle, rgba(0, 0, 0, 0.653) 10%, rgb(25, 25, 25) 98%);
+    }
+    ul li {
+        color: #fff;
+        font-family: "Chakra Petch";
+        font-size: 1.25rem;
+        padding: .6rem 1rem;
+        margin: .2rem 0;
+        letter-spacing: 2px;
+        background-color: rgba(73, 108, 77, 0.112);
+    }
 `
 
-const Segredo = styled.button `
-
-    border-top: .2rem solid rgb(255, 158, 128);
-    border-bottom: .4rem solid rgb(219, 58, 0);
-    border-inline: 2px solid rgb(162, 43, 0);
-    font-size: 1.25rem;
-    background-color: #ff6347;
-    cursor: pointer;
-
-
-`
-const CopyButton = styled.div `
+const BotaoCopiar = styled.div `
 
     position: absolute;
     top: 5rem;
@@ -177,19 +179,35 @@ const CopyButton = styled.div `
     height: 3.7rem;
     display: flex;
     align-items: center;
-    padding: 0rem .75rem;
+    padding: 0rem .2rem;
     justify-content: center;
-    border-radius: 50px 0 0 50px;
     cursor: pointer;
-    transition: filter .2s ease, background-color .2s ease;
+    background-color: rgba(255, 255, 255, .015);
 
-    &:hover {
-        filter:invert(0.7);
-        background-color: rgba(0, 0, 0, .02)
+    &:active {
+        background-color: rgba(255, 255, 255, .04);
     }
     img {
         width: 17px;
     }
+`
+const CopiadoComSucesso = styled.div `
+
+    font-family: "Chakra Petch";
+    font-size: 1.25rem;
+    letter-spacing: 2px;
+    background-color: rgba(0, 10, 0, .9);
+    color: #fff;
+    position: absolute;
+    height: 2rem;
+    left: 2rem;
+    right: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: top .15s ease-in-out;
+
 `
 
 export default function Calculadora() {
@@ -278,34 +296,55 @@ export default function Calculadora() {
     // função chamada por todos os botôes da calculadora
     const aplicar = (e) => { 
 
-    // Caso estejamos mudando o primeiro espaço de cálculo (mudar == true) como também o botão que estamos pressionando é um número
-    if(mudar == true && e.target.className == "numero") {
+    if(mudar && e.target.className == "numero") { // primeiro número
         setPrimeiroValor(primeiroValor + e.target.innerText)
         } 
-
-    // Caso estejamos mudando o segundo espaço do cálculo (mudar == false) como também o botão que estamos pressionando é um número
-        else if(mudar == false && e.target.className == "numero") {
+        else if(mudar == false && e.target.className == "numero") { // segundo número
             setSegundoValor(segundoValor + e.target.innerText)
         }
-    // Caso o botão pressionado seja um operador(+, -, etc.)
-        else if(e.target.className == "operador") {
+        else if(e.target.className == "operador") { // operador
             setOperador(e.target.innerText)
             setMudar(false)
         } 
-
-    // Caso o botão pressionado seja o de apagar(AC)
-        else if(e.target.className == "apagar") {
+        else if(e.target.className == "apagar") { // apagar
             setOperador('')
             setPrimeiroValor('')
             setSegundoValor('')
             setCalculo('')
             setMudar(true)
-
         } 
+
+    // (SEGREDO - Recomendo procurar na página para uma melhor experiência)
+        else if(e.target.className == "virgula") {
+            if(mudar) {
+                setPrimeiroValor(primeiroValor + '.')
+            } else {
+                setSegundoValor(segundoValor + ".")
+            }
+        }
+        else if(e.target.className == "negativo") {
+            if(mudar) {
+                if(primeiroValor.charAt(0) == "-") {
+                    setPrimeiroValor(primeiroValor.slice(1))
+                } else {
+                    setPrimeiroValor("-" + primeiroValor)
+                }
+
+            } else {
+                if(segundoValor.charAt(0) == "-") {
+                    setSegundoValor(segundoValor.slice(1))
+                } else {
+                    setSegundoValor("-" + segundoValor)
+                }
+            }
+        }
 
     // Caso pressionarmos o botão de realizar o cálculo
         else if(e.target.className == "resultado") {
-            if(operador == "+") { // soma
+            if(primeiroValor == '-' || segundoValor == '-'){
+                setCalculo("Ta faltando número")
+            }
+            else if(operador == "+") { // soma
                 setCalculo(+primeiroValor + +segundoValor)
                 setHistorico(historico.concat(primeiroValor + " " + operador + " " + segundoValor + " = " + (+primeiroValor + +segundoValor)))
             }
@@ -327,14 +366,17 @@ export default function Calculadora() {
             }
 
             // (SEGREDO)
-            else {
+            else if(operador == "^") {
                 if((+primeiroValor) ** (+segundoValor) == Infinity) {
                     setCalculo("Pra que isso???")
                 } else {
                     setCalculo((+primeiroValor) ** (+segundoValor))
                     setHistorico(historico.concat(primeiroValor + " " + operador + " " + segundoValor + " = " + ((+primeiroValor) ** (+segundoValor))))
                 }
-                
+            }
+            else  {
+                setCalculo((+primeiroValor * +segundoValor) / 100)
+                setHistorico(historico.concat(primeiroValor + " " + operador + " " + segundoValor + " = " + ((+primeiroValor * +segundoValor) / 100)))
             }
         }
     }
@@ -350,30 +392,29 @@ export default function Calculadora() {
     // TUDO A PARTIR DESTE PONTO É SECRETO, EXPLORE A PÁGINA ANTES DE LER PARA UMA MELHOR EXPERIÊNCIA
     
     const [animacao, setAnimacao] = useState('')
-    const [displayDoBotao, setDisplayDoBotao] = useState("none")
     const [modalSecreto, setModalSecreto] = useState(true)
     
-    // Funçãp para ativar e desativar o botão secreto de potência
+    // Funçãp para ativar e desativar o botão secreto dos cálculos complexos
     const funcaoSecreta = () => {
         if(modalSecreto) {
-            alert("Parabens, você achou um easter-egg. || Agora você pode fazer cálculos de potência.")
-            setDisplayDoBotao("inline-block")
-            setModalSecreto(false)
+            Setbotoes(botoes.concat(
+                {caracter: "^", tipo: "operador"},
+                {caracter: "( -1 )", tipo: "negativo"},
+                {caracter: ",", tipo: "virgula"},
+                {caracter: "%", tipo: "operador"}
+                ))
+            alert("Parabéns!! você achou o botão segreto!  ||  Agora é possível fazer contas mais complexas!")
             setAnimacao("color 2s infinite linear")
+            setModalSecreto(false)
         } 
-        // Caso o botão esteja aparecendo (modalSecreto == false)
         else {
-            setDisplayDoBotao("none")
+            Setbotoes(botoes.slice(0, 16))
             setModalSecreto(true)
             setAnimacao('')
         }
     }
-    // Função para a realização do cálculo de potenciação
-    const potencia = (e) => {
-        setOperador(e.target.innerText)
-        setMudar(false)
-    }
 
+    // Histórico de contas
     const [botaoHistorico, setBotaoHistorico] = useState('100%')
     const [historicoModal, setHistoricoModal] = useState(true)
 
@@ -388,8 +429,13 @@ export default function Calculadora() {
         }
     }
 
-    const copiar = () => {
-        
+    // Aviso para confirmar a cópia do resultado
+    const [gavetaCopiado, setGavetaCopiado] = useState('3rem')
+    const copia = () => {
+        setGavetaCopiado('5rem')
+        setTimeout(() => {
+            setGavetaCopiado('3rem')
+        }, 600);
     }
 
 
@@ -400,7 +446,7 @@ export default function Calculadora() {
                 <BotaoHistorico onClick={botaoHistoricoClique}>
                     <img src={History} alt="" />
                 </BotaoHistorico>
-                <ContainerHistorico className="teste" style={{bottom: botaoHistorico}}>
+                <ContainerHistorico style={{bottom: botaoHistorico}}>
                     <ul>
                         {historico.map( (item) => (
                             <li>
@@ -414,12 +460,15 @@ export default function Calculadora() {
                     <input type="text" disabled value={operador}/>
                     <input type="text" value={segundoValor} onClick={focar} placeholder="0"/>
                 </AreaDosInputs>
-            <Resposta type="text" value={calculo} placeholder="000" disabled/>
+            <AreaResposta type="text" value={calculo} placeholder="000" disabled/>
                 <CopyToClipboard text={calculo}>
-                    <CopyButton className="teste2">
+                    <BotaoCopiar onClick={copia}>
                         <img src={Copy} alt="" />
-                    </CopyButton>
+                    </BotaoCopiar>
                 </CopyToClipboard>
+                <CopiadoComSucesso style={{top: gavetaCopiado}}>
+                    Copiado com sucesso
+                </CopiadoComSucesso>
                 <AreaDosBotoes>
                 {/* 
                  Map para chamar todos os botões com númeoros, operações, entre outros.
@@ -430,7 +479,6 @@ export default function Calculadora() {
                         <button onClick={aplicar} className={item.tipo}>{item.caracter}</button>
                     ))}
                 </AreaDosBotoes>
-                <Segredo onClick={potencia} style={{display: displayDoBotao}}>^</Segredo>
                 <BotaoSecreto onClick={funcaoSecreta}/>
             </ContainerCalculadora>
         </>
