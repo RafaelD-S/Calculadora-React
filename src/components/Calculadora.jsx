@@ -123,14 +123,13 @@ const BotaoHistorico = styled.div `
     right: 9px;
     cursor: pointer;
     z-index: +3;
-    opacity: .55;
     transition: opacity .2s ease;
 
     img {
-        width: 16px;
+        width: 17px;
     }
-    &:hover {
-        opacity: .8;
+    &:active {
+        opacity: .6;
     }
 `
 const ContainerHistorico = styled.div `
@@ -286,7 +285,6 @@ export default function Calculadora() {
     // Hooks para, respectivamente: Resposta do cálculo, A operação(+, -, etc.), o primeiro e o segundo valor.
     const[calculo, setCalculo] = useState('')
     const[operador, setOperador] = useState('')
-
     const[primeiroValor, setPrimeiroValor] = useState('')
     const[segundoValor, setSegundoValor] = useState('')
     
@@ -313,16 +311,14 @@ export default function Calculadora() {
             setCalculo('')
             setMudar(true)
         } 
-
-    // (SEGREDO - Recomendo procurar na página para uma melhor experiência)
-        else if(e.target.className == "virgula") {
+        else if(e.target.className == "virgula") { // Adcionar vírgula
             if(mudar) {
                 setPrimeiroValor(primeiroValor + '.')
             } else {
                 setSegundoValor(segundoValor + ".")
             }
         }
-        else if(e.target.className == "negativo") {
+        else if(e.target.className == "negativo") { // Negativizar um número
             if(mudar) {
                 if(primeiroValor.charAt(0) == "-") {
                     setPrimeiroValor(primeiroValor.slice(1))
@@ -389,8 +385,6 @@ export default function Calculadora() {
         }
     }
     
-    // TUDO A PARTIR DESTE PONTO É SECRETO, EXPLORE A PÁGINA ANTES DE LER PARA UMA MELHOR EXPERIÊNCIA
-    
     const [animacao, setAnimacao] = useState('')
     const [modalSecreto, setModalSecreto] = useState(true)
     
@@ -432,10 +426,12 @@ export default function Calculadora() {
     // Aviso para confirmar a cópia do resultado
     const [gavetaCopiado, setGavetaCopiado] = useState('3rem')
     const copia = () => {
-        setGavetaCopiado('5rem')
-        setTimeout(() => {
-            setGavetaCopiado('3rem')
-        }, 600);
+        if(calculo != '') {
+            setGavetaCopiado('5rem')
+            setTimeout(() => {
+                setGavetaCopiado('3rem')
+            }, 800);
+        } 
     }
 
 
@@ -448,6 +444,7 @@ export default function Calculadora() {
                 </BotaoHistorico>
                 <ContainerHistorico style={{bottom: botaoHistorico}}>
                     <ul>
+                        {/* Map para mostrar todas as contas feitas */}
                         {historico.map( (item) => (
                             <li>
                                 {item}
@@ -461,6 +458,7 @@ export default function Calculadora() {
                     <input type="text" value={segundoValor} onClick={focar} placeholder="0"/>
                 </AreaDosInputs>
             <AreaResposta type="text" value={calculo} placeholder="000" disabled/>
+            {/* Propriedade específica para copiar coisas para a area de trabalho */}
                 <CopyToClipboard text={calculo}>
                     <BotaoCopiar onClick={copia}>
                         <img src={Copy} alt="" />
