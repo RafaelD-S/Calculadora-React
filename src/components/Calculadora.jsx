@@ -403,7 +403,7 @@ export default function Calculadora() {
                 {caracter: ",", tipo: "virgula"},
                 {caracter: "%", tipo: "operador"}
                 ))
-            alert("Parabéns!! você achou o botão segreto!  ||  Agora é possível fazer contas mais complexas!")
+            alert("Parabéns!! você achou o botão secreto!  ||  Agora é possível fazer contas mais complexas!")
             setAnimacao("color 2s infinite linear")
             setModalSecreto(false)
         } 
