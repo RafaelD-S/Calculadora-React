@@ -211,71 +211,112 @@ const CopiadoComSucesso = styled.div `
 
 export default function Calculadora() {
 
+    const [displayBotoesSecretos, setDisplayBotoesSecretos] = useState(false)
+
+    // Hook com os botões extras da calculadora
+    const [botoesSecretos, setBotoesSecretos] = useState([
+        {
+            caracter: "^",
+            tipo: "operador",
+            displayInicial: displayBotoesSecretos
+        },
+        {
+            caracter: "( -1 )",
+            tipo: "negativo",
+            displayInicial: displayBotoesSecretos
+        },
+        {
+            caracter: ",", 
+            tipo: "virgula",
+            displayInicial: displayBotoesSecretos
+        },
+        {
+            caracter: "%", 
+            tipo: "operador",
+            displayInicial: displayBotoesSecretos
+        }
+    ])
     // Hook com map para os botôes da calculadora 
     const [botoes, Setbotoes] = useState([
         {
             caracter: 1,
-            tipo: "numero"
+            tipo: "numero",
+            displayInicial: true
         },
         {
             caracter: 2,
-            tipo: "numero"
+            tipo: "numero",
+            displayInicial: true
         },
         {
             caracter: 3,
-            tipo: "numero"
+            tipo: "numero",
+            displayInicial: true
         },
         {
             caracter: "+",
-            tipo: "operador"
+            tipo: "operador",
+            displayInicial: true
         },
         {
             caracter: 4,
-            tipo: "numero"
+            tipo: "numero",
+            displayInicial: true
         },
         {
             caracter: 5,
-            tipo: "numero"
+            tipo: "numero",
+            displayInicial: true
         },
         {
             caracter: 6,
-            tipo: "numero"
+            tipo: "numero",
+            displayInicial: true
         },
         {
             caracter: "-",
-            tipo: "operador"
+            tipo: "operador",
+            displayInicial: true
         },
         {
             caracter: 7,
-            tipo: "numero"
+            tipo: "numero",
+            displayInicial: true
         },
         {
             caracter: 8,
-            tipo: "numero"
+            tipo: "numero",
+            displayInicial: true
         },
         {
             caracter: 9,
-            tipo: "numero"
+            tipo: "numero",
+            displayInicial: true
         },
         {
             caracter: "*",
-            tipo: "operador"
+            tipo: "operador",
+            displayInicial: true
         },
         {
             caracter: "AC",
-            tipo: "apagar"
+            tipo: "apagar",
+            displayInicial: true
         },
         {
             caracter: 0,
-            tipo: "numero"
+            tipo: "numero",
+            displayInicial: true
         },
         {
             caracter: "/",
-            tipo: "operador"
+            tipo: "operador",
+            displayInicial: true
         },
         {
             caracter: "=",
-            tipo: "resultado"
+            tipo: "resultado",
+            displayInicial: true
         }
     ])
     
@@ -391,18 +432,13 @@ export default function Calculadora() {
     // Funçãp para ativar e desativar o botão secreto dos cálculos complexos
     const funcaoSecreta = () => {
         if(modalSecreto) {
-            Setbotoes(botoes.concat(
-                {caracter: "^", tipo: "operador"},
-                {caracter: "( -1 )", tipo: "negativo"},
-                {caracter: ",", tipo: "virgula"},
-                {caracter: "%", tipo: "operador"}
-                ))
+            setDisplayBotoesSecretos(true)
             alert("Parabéns!! você achou o botão secreto!  ||  Agora é possível fazer contas mais complexas!")
             setAnimacao("color 2s infinite linear")
             setModalSecreto(false)
         } 
         else {
-            Setbotoes(botoes.slice(0, 16))
+            setDisplayBotoesSecretos(false)
             setModalSecreto(true)
             setAnimacao('')
         }
@@ -444,7 +480,7 @@ export default function Calculadora() {
                 </BotaoHistorico>
                 <ContainerHistorico style={{bottom: botaoHistorico}}>
                     <ul>
-                        {/* Map para mostrar todas as contas feitas */}
+                        {/* Map para mostrar todas as contas feitas no historico*/}
                         {historico.map( (item) => (
                             <li>
                                 {item}
@@ -468,14 +504,18 @@ export default function Calculadora() {
                     Copiado com sucesso
                 </CopiadoComSucesso>
                 <AreaDosBotoes>
+                {/* map par achamar os botões extras */}
+                    {displayBotoesSecretos && botoesSecretos.map((item) => (
+                        <button onClick={aplicar} className={item.tipo}>
+                            {item.caracter}
+                        </button>
+                    ))}
                 {/* 
                  Map para chamar todos os botões com númeoros, operações, entre outros.
                  Cada botão ativa a função "aplicar" quando clicado, possui uma classe que represente seu tipo (numero, operação, etc.)
                  Mostre no botão o item caracter do array de objeto
                 */}
-                    {botoes.map((item) => (
-                        <button onClick={aplicar} className={item.tipo}>{item.caracter}</button>
-                    ))}
+                    {botoes.map((item) => item.displayInicial === true?  <button onClick={aplicar} className={item.tipo} >{item.caracter}</button>:"")}
                 </AreaDosBotoes>
                 <BotaoSecreto onClick={funcaoSecreta}/>
             </ContainerCalculadora>
