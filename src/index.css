@@ -1,12 +1,25 @@
 input::placeholder {
     opacity: .4;
 }
+h3, h5 {
+	font-weight: 400;
+}
 
-@keyframes color {
-	0%   { box-shadow: 0 0 15px #33CCCC;}
-	20%  { box-shadow: 0 0 15px #33CC36;}
-	40%  { box-shadow: 0 0 15px #B8CC33;}
-	60%  { box-shadow: 0 0 15px #FCCA00;}
-	80%  { box-shadow: 0 0 15px #33CC36;}
-	100% { box-shadow: 0 0 15px #33CCCC;}
+@keyframes dourado {
+	0% {
+		box-shadow: 0 5px 15px rgb(255, 153, 0);
+	}
+	25% {
+		box-shadow: 5px 0 15px rgb(255, 153, 0);
+	}
+	50% {
+		box-shadow: 0 -5px 15px rgb(255, 153, 0);
+	}
+	75% {
+		box-shadow: -5px 0 15px rgb(255, 153, 0);
+	}
+	100% {
+		box-shadow: 0 5px 15px rgb(255, 153, 0);
+
+	}
 }
